@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo-container
+    ports:
+      - "27017:27017"
+    restart: always
+    networks:
+      - mean-network
+
+  backend:
+    image: chandrasuresh/backend
+    container_name: backend-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+    restart: always
+    networks:
+      - mean-network
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/mean-db
+
+  frontend:
+    image: chandrasuresh/frontend
+    container_name: frontend-container
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - mean-network
+
+networks:
+  mean-network:
+    driver: bridge
